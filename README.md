@@ -1,7 +1,7 @@
-# Ransomware Analysis: Statement009840913.scr
+# Ransomware Analysis
 
 ## Introduction
-This report analyzes Statement009840913.scr, a new ransomware variant identified during a recent security incident at my office.  This report aims to outline its behavior, encryption mechanisms, and mitigation strategies.  
+This report analyzes Statement009840913.scr, an apparent ransomware variant identified during a recent security incident at my office.  This report aims to outline its behavior, encryption mechanisms, and mitigation strategies.  
 
 ## Overview
 | Basic Information |  |
@@ -13,7 +13,7 @@ This report analyzes Statement009840913.scr, a new ransomware variant identified
 | **File Type**  | Portable Executable  |
 | **Size**  | 51,327,578 bytes  |
 
- The executable seems to be packed by Pyinstaller.  
+ At the date of detection, this file had never been uploaded to virustotal, and was detected by 4 out of 72 antivirus. 
 
  ## Infection Vector
 
@@ -28,8 +28,9 @@ This report analyzes Statement009840913.scr, a new ransomware variant identified
  &emsp;-Communicates with 4 IP addresses and 1 DNS  
  &emsp;-Parses it's PE header  
 
- **File Encryption**: Utilizes Python 3.8 and multiple encryption alogrithms  
- &emsp;-**Algorithms**  
- &emsp;-**Key Generation**  
+ **File Encryption**: Utilizes Python 3.8 to encrypt data with multiple encryption algorithms.
+
+ ## Communications
+ Uses SSL to encrypt its communications
 
  ## Interesting Files  
