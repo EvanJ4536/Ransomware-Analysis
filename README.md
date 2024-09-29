@@ -17,6 +17,19 @@ This report analyzes Statement009840913.scr, a new ransomware variant identified
 
  ## Infection Vector
 
- This ransomware was received in a Phishing email sent to our support department.  The attacker claimed to be a customer that was over charged. They sent an email with an attachment of a "Screenshot of their bank statment" in the form of an Executable Screensaver format.  The attachment had the icon of a pdf file and also requested administrator access when executed.  
+ This ransomware was received in a Phishing email sent to our support department.  The attacker claimed to be a customer that was over charged. They sent an email with an attachment of a "Screenshot of their bank statment" in the form of an Executable Screensaver format.  The attachment had the icon of a pdf file and requested administrator access when executed.  
 
  ## Behavioral Analysis  
+
+ **Execution**: Upon execution, Statement009840913.scr  
+ &emsp;-links functions in many DLLs  
+ &emsp;-Installs Python along with many cryptologic libraries  
+ &emsp;-Drops many more files  
+ &emsp;-Communicates with 4 IP addresses and 1 DNS  
+ &emsp;-Parses it's PE header  
+
+ **File Encryption**: Utilizes Python 3.8 and multiple encryption alogrithms  
+ &emsp;-**Algorithms**  
+ &emsp;-**Key Generation**  
+
+ ## Interesting Files  
