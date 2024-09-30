@@ -32,6 +32,7 @@ ________________________________________________________________________________
  &emsp;- Sets Environment Variables  
  &emsp;- Enumerates Files  
  
+ **File Encryption**: Utilizes Python 3.8 to encrypt data with multiple encryption algorithms.
  
  ### Interesting Mutex Created    
  &emsp;- Local\SM0:2580:304:WilStaging_02  
@@ -42,17 +43,21 @@ ________________________________________________________________________________
 __________________________________________________________________________________________________________
 
  ## Static Analysis  
- ### Interesting Functions I've Attempted to Reverse  
+ ### Interesting Functions I've Reverse Engineered    
  _________________________________________________________________________________________________________
- **This function deletes an Environment Variable.**
+ **1. This function deletes an Environment Variable.**
  ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/remove_env_var.png?raw=true)   
- takes a series of bytes into the Pointer variable. Pointer is then passed into the Convert_To_Wide_Char function, and this returns a desired Environment_Variable_Name.  Then SetEnvironmentVariableW is called and our Environment_Variable_Name is passed in as well as a nullptr.  When a null value is supplied for lpValue in SetEnvironmentVariableW(lpName, lpValue), the environment variable named lpName will be deleted from the current process. Therefore the environment variable with the same name as Environment_Variable_Name that we passed in will be removed from the environment block of the current process only. 
-
+ Takes a series of bytes into the Pointer variable. Pointer is then passed into the Convert_To_Wide_Char function, and this returns a desired Environment_Variable_Name.  Then SetEnvironmentVariableW() is called and our Environment_Variable_Name is passed in as well as a nullptr.  When a null value is supplied for lpValue in SetEnvironmentVariableW(lpName, lpValue), the environment variable named lpName will be deleted from the current process. Therefore the environment variable with the same name as Environment_Variable_Name that we passed in will be removed from the environment block of the current process only.  
+<br/>
+<br/>  
+ **2. This function loads a DLL from an altered path into the current process's address space**
  ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/DLL-side-loading.png?raw=true)  
-
- **File Encryption**: Utilizes Python 3.8 to encrypt data with multiple encryption algorithms.
-
- ## Communications
- Uses SSL to encrypt its communications
-
- ## Interesting Files  
+ Takes a uint8_t as a parameter that is a fileName, converts it to 16 bit wide character then passes it into LoadLibraryExW() as the library file name with the flag LOAD_WITH_ALTERED_SEARCH_PATH, this tell the function what path to begin searching for the DLL.  
+<br/>
+<br/>  
+  **3. This function converts a supplied uint8_t to a 16 bit wide char**
+ ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/Convert_to_wide_char.png?raw=true)  
+  Pass in a uint8_t and it will pass it to MultiByteToWideChar() and it will check the size needed for memory allocation, throw away the result and process it again with the correct amount of memory saving the result into Pointer_To_Wide_Char2 and returning it if its not 0.  
+<br/>
+<br/>  
+  
