@@ -43,7 +43,7 @@ ________________________________________________________________________________
 __________________________________________________________________________________________________________
 
  ## Static Analysis  
- ### Interesting Functions I've Reverse Engineered    
+ ### Interesting Functions I've Reverse Engineered <sub>(Variable names changed for simplicity)
  _________________________________________________________________________________________________________
  **1. This function deletes an Environment Variable.**
  ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/remove_env_var.png?raw=true)   
