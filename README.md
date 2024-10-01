@@ -1,7 +1,7 @@
 # Ransomware Analysis
 
 ## Introduction
-This report analyzes a file: Statement009840913.scr, an apparent ransomware variant identified during a recent security incident at my office.  This report aims to outline its behavior, encryption mechanisms, and mitigation strategies.  
+This report analyzes a file: Statement009840913.scr, an apparent ransomware variant identified during a recent security incident at my office.  This report aims to outline my findings in static and behavioral analysis.  
 
 ## Overview
 | Basic Information |  |
