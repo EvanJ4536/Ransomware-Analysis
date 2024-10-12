@@ -52,12 +52,7 @@ ________________________________________________________________________________
 <br/>  
  **2. This function loads a DLL from an altered path into the current process's address space**
  ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/DLL-side-loading.png?raw=true)  
- Takes a uint8_t as a parameter that is a fileName, converts it to 16 bit wide character then passes it into LoadLibraryExW() as the library file name with the flag LOAD_WITH_ALTERED_SEARCH_PATH, this tell the function what path to begin searching for the DLL.  
-<br/>
-<br/>  
-  **3. This function converts a supplied uint8_t to a 16 bit wide char**
- ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/Convert_to_wide_char.png?raw=true)  
-  Pass in a uint8_t and it will pass it to MultiByteToWideChar() and it will check the size needed for memory allocation, throw away the result and process it again with the correct amount of memory saving the result into Pointer_To_Wide_Char2 and returning it if its not 0.  
+ Takes a uint8_t as a parameter that is a fileName, converts it to 16 bit wide character then passes it into LoadLibraryExW() as the library file name with the flag LOAD_WITH_ALTERED_SEARCH_PATH, this tell the function what path to begin searching for the DLL.   
 <br/>
 <br/>  
   
