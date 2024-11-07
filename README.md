@@ -3,6 +3,8 @@
 ## Introduction
 This report analyzes a file: Statement009840913.scr, an apparent ransomware variant identified during a recent security incident at my office.  This report aims to outline my findings in static and behavioral analysis.  
 
+Here is a Threat Graph I made on virus total: https://www.virustotal.com/graph/g85c720a1b4c546b3bf0d8170333b2b99a7c42e844c5c47c5af8b6d614bbe8c2e  
+
 ## Overview
 | Basic Information |  |
 | ----------------- | ---------------- |
@@ -52,7 +54,7 @@ ________________________________________________________________________________
 <br/>  
  **2. This function loads a DLL from an altered path into the current process's address space**
  ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/DLL-side-loading.png?raw=true)  
- Takes a uint8_t as a parameter that is a fileName, converts it to 16 bit wide character then passes it into LoadLibraryExW() as the library file name with the flag LOAD_WITH_ALTERED_SEARCH_PATH, this tell the function what path to begin searching for the DLL.   
+ Takes a uint8_t as a parameter that holds integer values that represent the ASCII values for an absolute path to a file (this is an obfusication attempt I think), converts it to 16 bit wide character then passes it into LoadLibraryExW() as the library file path with the flag LOAD_WITH_ALTERED_SEARCH_PATH.
 <br/>
 <br/>  
   
