@@ -3,7 +3,7 @@
 ## Introduction
 This report analyzes a file: Statement009840913.scr, an apparent ransomware variant identified during a recent security incident at my office.  This report aims to outline my findings in static and behavioral analysis.  
 
-Here is a Threat Graph I made on virus total: https://www.virustotal.com/graph/g85c720a1b4c546b3bf0d8170333b2b99a7c42e844c5c47c5af8b6d614bbe8c2e  
+Here is a Threat Graph I made on VirusTotal: https://www.virustotal.com/graph/g85c720a1b4c546b3bf0d8170333b2b99a7c42e844c5c47c5af8b6d614bbe8c2e  
 
 ## Overview
 | Basic Information |  |
@@ -55,7 +55,7 @@ ________________________________________________________________________________
 <br/>
 <br/>  
  **2. First look at the code**
- ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/raw_code.png?raw=true)  
+ ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/raw_code.png?raw=true) 
   The code was obfuscated with random variable names and hex strings in place of strings. 
   But I can clearly see the Crypto imports and that variables contain values used in encryption and that they are decrypting the longest string of hex values that contains 33 million characters then executing the string with exec(). 
   The script is only 15 lines so this was very easy to reverse. 
@@ -79,7 +79,7 @@ ________________________________________________________________________________
 <br/>
 
 **4. Analyzing the hex**
- Converting the ascii to hex was yielding nothing useful, I looked closer at the hex and found the magic header for compressed data, "x\9xc".
+ Converting the hex to ascii was yielding nothing useful, I looked closer at the hex and found the magic header for compressed data, "x\9xc".
  With that knowledge I wrote a simple script to decompress it using zlib.  I pasted in a snippet of the hex and ran the my decompressor.  
  At first I got an error that its missing the adler32 checksum at the end of the hex so I edited the script to be able to ignore that and decompress whatever I have and wrote the output to a file.
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/decompressed_partial_hex.png?raw=true)  
@@ -90,8 +90,8 @@ ________________________________________________________________________________
 **5. Going back to the other bundled files from the pyinstaller archive**
   At this point I put a pause on going further into the file decompression and focused on another interesting file I found bundled called "pyimod01_archive.pyc".  I decompiled it the same way I did the dropper.
   This revealed a decrypter and a custom decompressor.  The decrypter seems to be using tinyaes for encryption and a key imported from a file called "pyimod00_crypto_key" but I can't find it anywhere, could be contained in the compressed data found above or could be 
-  generated dynamically.  Dynamic analysis may be my best route here. The decompressor utilizes the decrypter mentioned above to decrypt and then unpack python files back into executable code.  I see a variable in the decompressor referencing the byte string b'PYZ\x00'.   Amongst the bundled files is a Python Zip Application File named "PYZ-00.pyz".  So the custom decompressor script is for this archive.  I need to find the file "pyimod00_crypto_key".
-  Is it doing this so it can run python scripts instead of an exe?
+  generated dynamically.  Dynamic analysis may be my best route here. The decompressor utilizes the decrypter mentioned above to decrypt and then unpack python files back into executable code.  I see a variable in the decompressor referencing the byte string 
+  b'PYZ\x00'.  Amongst the bundled files is a Python Zip Application File named "PYZ-00.pyz".  So the custom decompressor script is for this archive.  I need to find the file "pyimod00_crypto_key".
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/pyimod01_crypter_compressor.png?raw=true)
 <br/>
 <br/>
