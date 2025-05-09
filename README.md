@@ -80,10 +80,25 @@ ________________________________________________________________________________
 
 **4. Analyzing the hex**
  Converting the hex to ascii was yielding nothing useful, I looked closer at the hex and found the magic header for compressed data, "x\9xc".
- With that knowledge I wrote a simple script to decompress it using zlib.  I pasted in a snippet of the hex and ran the my decompressor.  
- At first I got an error that its missing the adler32 checksum at the end of the hex so I edited the script to be able to ignore that and decompress whatever I have and wrote the output to a file.
+ With that knowledge I wrote a simple script to decompress it using zlib.  I pasted in a snippet of the hex and ran my decompressor.  At first I got an error that its missing the adler32 checksum at the end of the hex so I edited the script to ignore that and write the output to a file.
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/decompressed_partial_hex.png?raw=true)  
- Notice the little message underlined in red that the hacker left us, HA!  "Roses are red, Violets are blue, You are a skid, Nobody likes you".  Besides that, this script is heavily obfuscated and its going to take considerable time and effort to deobfuscate.  I might be able to find out more information, easier with dynamic analysis later.
+ Notice the little message underlined in red that the hacker left us, HA!  "Roses are red, Violets are blue, You are a skid, Nobody likes you".  
+ 
+ 
+ I wrote a script to defeat the whitespace obfuscation ([Whitespace Deobfuscator](https://github.com/EvanJ4536/Whitespace-Deobfuscator/tree/main)) and extract all the hex strings from the obfuscated code.
+ I combined the strings and it resulted in a 15,100,115 character hex string.  I tried to run it through my decompressor
+ like I did earlier but I kept getting errors.  Through very long trial and error I was able to pinpoint the error and truncate the compressed data to 5,881,693 and now it decompresses.
+ Ill have to investigate later if those extra bytes are part of anything.  For now I think this file is complete the only thing that was added since the last picture was more data appended to the long hex string on line 30.
+ I'm pretty sure the huge hex string is again a python script.  Besides that, this script is heavily obfuscated and its going to take some more considerable time and effort to deobfuscate but I did find this.
+![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/obf_unhexlify.png?raw=true)  
+ This gave me the idea to try to unhexify the new hex string.  This revealed encoded data that I was able to identify as base64. I used a base64 decode script to decode it and this produced a python file.
+<br/>
+<br/>
+
+**5. Investigating the new python script**
+ This new script is interesting because it has a few interesting imports like subprocess, urllib, and PIL.  below the imports I can see the PNG file header in a byte string saved to an img_bytes variable.
+ I copied those bytes into a PIL image viewer script and a partial image of a Bank of America bank statement or something popped up.  Interesting wheres the rest of the image data.
+![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/BofA.png?raw=true)  
 <br/>
 <br/>
  
