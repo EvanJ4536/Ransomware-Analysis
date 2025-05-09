@@ -89,7 +89,7 @@ ________________________________________________________________________________
  I combined the strings and it resulted in a 15,100,115 character hex string.  I tried to run it through my decompressor
  like I did earlier but I kept getting errors.  Through very long trial and error I was able to pinpoint the error and truncate the compressed data to 5,881,693 and now it decompresses.
  Ill have to investigate later if those extra bytes are part of anything.  For now I think this file is complete the only thing that was added since the last picture was more data appended to the long hex string on line 30.
- I'm pretty sure the huge hex string is again a python script.  Besides that, this script is heavily obfuscated and its going to take some more considerable time and effort to deobfuscate but I did find this.
+ I'm pretty sure the huge hex string is again a python script.  Besides that, this script is heavily obfuscated and its going to take some more considerable time and effort to deobfuscate but I did find this.  backwards strings containing imports or function calls.
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/obf_unhexlify.png?raw=true)  
  This gave me the idea to try to unhexify the new hex string.  This revealed encoded data that I was able to identify as base64. I used a base64 decode script to decode it and this produced a python file.
 <br/>
@@ -98,12 +98,12 @@ ________________________________________________________________________________
 **5. Investigating the new python script**
  This new script is interesting because it has a few interesting imports like subprocess, urllib, and PIL.  below the imports I can see the PNG file header in a byte string saved to an img_bytes variable.
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/imports_and_image_data.png?raw=true)  
- I copied those bytes into a PIL image viewer script and a partial image of a Bank of America bank statement or something popped up.  Interesting wheres the rest of the image data.
+ I copied those bytes into a PIL image viewer script and a partial image of a Bank of America bank statement or something popped up.  Interesting, wheres the rest of the image data.
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/BofA.png?raw=true)  
 <br/>
 <br/>
  
-**5. Going back to the other bundled files from the pyinstaller archive**
+**6. Going back to the other bundled files from the pyinstaller archive**
   At this point I put a pause on going further into the file decompression and focused on another interesting file I found bundled called "pyimod01_archive.pyc".  I decompiled it the same way I did the dropper.
   This revealed a decrypter and a custom decompressor.  The decrypter seems to be using tinyaes for encryption and a key imported from a file called "pyimod00_crypto_key" but I can't find it anywhere, could be contained in the compressed data found above or could be 
   generated dynamically.  Dynamic analysis may be my best route here. The decompressor utilizes the decrypter mentioned above to decrypt and then unpack python files back into executable code.  I see a variable in the decompressor referencing the byte string 
