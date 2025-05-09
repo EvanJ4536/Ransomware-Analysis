@@ -83,15 +83,14 @@ ________________________________________________________________________________
  With that knowledge I wrote a simple script to decompress it using zlib.  I pasted in a snippet of the hex and ran the my decompressor.  
  At first I got an error that its missing the adler32 checksum at the end of the hex so I edited the script to be able to ignore that and decompress whatever I have and wrote the output to a file.
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/decompressed_partial_hex.png?raw=true)  
- Notice the little message underlined in red that the hacker left us, HA!  "Roses are red, Violets are blue, You are a skid, Nobody likes you".  Besides that, this script is heavily obfuscated and its going to take considerable time and effort to deobfuscate.  
- I might be able to find out more information, easier with dynamic analysis later.
+ Notice the little message underlined in red that the hacker left us, HA!  "Roses are red, Violets are blue, You are a skid, Nobody likes you".  Besides that, this script is heavily obfuscated and its going to take considerable time and effort to deobfuscate.  I might be able to find out more information, easier with dynamic analysis later.
 <br/>
 <br/>
  
 **5. Going back to the other bundled files from the pyinstaller archive**
   At this point I put a pause on going further into the file decompression and focused on another interesting file I found bundled called "pyimod01_archive.pyc".  I decompiled it the same way I did the dropper.
-  This revealed a decrypter and a custom decompressor.  The decrypter seems to be using tinyaes for encryption and a key imported from a file called "pyimod_crypto_key" but I can't find it anywhere, could be contained in the compressed data found above or could be 
-  generated dynamically.  Dynamic analysis may be my best route here. The decompressor utilizes the decrypter mentioned above to decrypt and then unpack python files back into executable code.  
+  This revealed a decrypter and a custom decompressor.  The decrypter seems to be using tinyaes for encryption and a key imported from a file called "pyimod00_crypto_key" but I can't find it anywhere, could be contained in the compressed data found above or could be 
+  generated dynamically.  Dynamic analysis may be my best route here. The decompressor utilizes the decrypter mentioned above to decrypt and then unpack python files back into executable code.  I see a variable in the decompressor referencing the byte string b'PYZ\x00'.   Amongst the bundled files is a Python Zip Application File named "PYZ-00.pyz".  So the custom decompressor script is for this archive.  I need to find the file "pyimod00_crypto_key".
   Is it doing this so it can run python scripts instead of an exe?
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/pyimod01_crypter_compressor.png?raw=true)
 <br/>
