@@ -45,16 +45,50 @@ ________________________________________________________________________________
 __________________________________________________________________________________________________________
 
  ## Static Analysis  
- ### Interesting Functions I've Reverse Engineered <sub>(Variable names changed for simplicity)
  _________________________________________________________________________________________________________
- **1. This function deletes an Environment Variable.**
- ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/remove_env_var.png?raw=true)   
- Takes a series of bytes into the Pointer variable. Pointer is then passed into the Convert_To_Wide_Char function, and this returns a desired Environment_Variable_Name.  Then SetEnvironmentVariableW() is called and our Environment_Variable_Name is passed in as well as a nullptr.  When a null value is supplied for lpValue in SetEnvironmentVariableW(lpName, lpValue), the environment variable named lpName will be deleted from the current process. Therefore the environment variable with the same name as Environment_Variable_Name that we passed in will be removed.  
+ **1. Extract the python code from the pyinstaller archive.**
+ Using uncompyle6 version 3.9.2 I was able to extract the python code titled 
+ "code_obf-Statement002.pyc" and many other bundled files from the pyinstaller archive.
 <br/>
 <br/>  
- **2. This function loads a DLL from an altered path into the current process's address space**
- ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/DLL-side-loading.png?raw=true)  
- Takes a uint8_t as a parameter that holds integer values that represent the ASCII values for an absolute path to a file (this is an obfusication attempt I think), converts it to 16 bit wide char then passes it into LoadLibraryExW() as the library file path with the flag LOAD_WITH_ALTERED_SEARCH_PATH.
+ **2. First look at the code**
+ ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/raw_code.png?raw=true)  
+  The code was obfuscated with random variable names and hex strings in place of strings. 
+  But I can clearly see the Crypto imports and that variables contain values used in encryption and that they are decrypting the longest string of hex values that contains 33 million characters then executing the string with exec(). 
+  The script is only 15 lines so this was very easy to reverse. 
 <br/>
 <br/>  
-  
+**3. Reversed code and decrypting the string**
+ ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/reversed_dropper.png?raw=true)  
+  I renamed all the variables to match their function and instead of calling the exec function I write the decrypted data to a file.  
+  When trying to run the script it produced this error: SyntaxError: Non-UTF-8 code starting with '\xff' in file. I found that the file was using UTF-16 LE BOM encoding.  I changed it to UTF-8 and the script ran as expected.
+ <br/>
+ <br/>
+ 
+**3. Discovery of obfuscator**
+![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/hyperion_obfuscator.png?raw=true)  
+ I opened the file that was produced by the decrypt call in Notepad++ and its an obfuscator, specifically the Hyperion Obfuscator, which can be found on github here https://github.com/billythegoat356/Hyperion. 
+ This version is modified and is 7 thousand lines.  Probably just a tactic to make this process more confusing.  I searched for suspicious strings, and got a hit on "lambda".  This revealed a suprise I hadn't caught while looking through the file visually.
+ There was code hidden just out of frame in my window padded by white space characters before it. I looked at the right-left scroll bar at the bottom of the file and I can see that I can scroll for a long time to the right.
+ This revealed huge strings of hex characters and lambda functions. Below is a snippet, notice how small the scrollbar at the bottom is.
+![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/hidden_hex_white_space.png?raw=true)  
+<br/>
+<br/>
+
+**4. Analyzing the hex**
+ Converting the ascii to hex was yielding nothing useful, I looked closer at the hex and found the magic header for compressed data, "x\9xc".
+ With that knowledge I wrote a simple script to decompress it using zlib.  At first I got an error that its missing the adler32 checksum at the end of the hex so I edited the script to be able to ignore that and decompress whatever I have and wrote the output to a file.
+![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/decompressed_partial_hex.png?raw=true)  
+ Notice the little message underlined in red that the hacker left us!  Besides that, this script is heavily obfuscated and its going to take considerable time and effort to deobfuscate.  
+ I might be able to find out more information, easier with dynamic analysis later.
+<br/>
+<br/>
+ 
+**5. Going back to the other bundled files from the pyinstaller archive**
+  At this point I put a pause on going further into the file decompression and focused on another interesting file I found bundled called "pyimod01_archive.pyc".  I decompiled it the same way I did the dropper.
+  This revealed a decrypter and a custom decompressor.  The decrypter seems to be using tinyaes for encryption and a key imported from a file called "pyimod_crypto_key" but I can't find it anywhere, could be contained in the compressed data found above or could be generated dynamically.
+  Dynamic analysis may be my best route here. The decompressor utilizes the decrypter mentioned above to decrypt and then unpack python files back into executable code.  
+  Is it doing this so it can run python scirpts instead of an exe?
+![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/pyimod01_crypter_compressor.png?raw=true)
+<br/>
+<br/>
