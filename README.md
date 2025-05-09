@@ -97,6 +97,7 @@ ________________________________________________________________________________
 
 **5. Investigating the new python script**
  This new script is interesting because it has a few interesting imports like subprocess, urllib, and PIL.  below the imports I can see the PNG file header in a byte string saved to an img_bytes variable.
+![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/imports_and_image_data.png?raw=true)  
  I copied those bytes into a PIL image viewer script and a partial image of a Bank of America bank statement or something popped up.  Interesting wheres the rest of the image data.
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/BofA.png?raw=true)  
 <br/>
