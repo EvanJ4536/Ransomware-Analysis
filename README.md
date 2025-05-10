@@ -99,15 +99,17 @@ ________________________________________________________________________________
  This new script is interesting because it has a few interesting imports like subprocess, urllib, and PIL.  below the imports I can see the PNG file header in a byte string saved to an img_bytes variable.
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/imports_and_image_data.png?raw=true)  
  I copied those bytes into a PIL image viewer script and a partial image of a Bank of America bank statement or something popped up.  Interesting, wheres the rest of the image data.
-![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/BofA.png?raw=true)  
+![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/BofA_cropped.png?raw=true)  
+After hours of combing through the data in this script I can't make any sense of it, coming back to this later.
 <br/>
 <br/>
  
 **6. Going back to the other bundled files from the pyinstaller archive**
-  At this point I put a pause on going further into the file decompression and focused on another interesting file I found bundled called "pyimod01_archive.pyc".  I decompiled it the same way I did the dropper.
-  This revealed a decrypter and a custom decompressor.  The decrypter seems to be using tinyaes for encryption and a key imported from a file called "pyimod00_crypto_key" but I can't find it anywhere, could be contained in the compressed data found above or could be 
+  At this point I wanted to focus on another interesting file I found bundled in the exe called "pyimod01_archive.pyc".  I decompiled it the same way I did the dropper.
+  This revealed a decrypter and a custom decompressor written in python.  The decrypter seems to be using tinyaes for encryption and a key imported from a file called "pyimod00_crypto_key" but I can't find it anywhere, could be contained in the compressed data found above or could be 
   generated dynamically.  Dynamic analysis may be my best route here. The decompressor utilizes the decrypter mentioned above to decrypt and then unpack python files back into executable code.  I see a variable in the decompressor referencing the byte string 
   b'PYZ\x00'.  Amongst the bundled files is a Python Zip Application File named "PYZ-00.pyz".  So the custom decompressor script is for this archive.  I need to find the file "pyimod00_crypto_key".
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/pyimod01_crypter_compressor.png?raw=true)
 <br/>
 <br/>
+
