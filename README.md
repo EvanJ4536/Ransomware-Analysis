@@ -31,7 +31,7 @@ ________________________________________________________________________________
  ### Execution
  &emsp;- Links functions in many DLLs  
  &emsp;- Drops Python (common for packed python executables) along with many cryptologic libraries  
- &emsp;- Drops many more files (common for packed python executables)
+ &emsp;- Drops many more files (common for packed python executables)  
  &emsp;- Communicates with 4 IP addresses and 1 DNS  
  &emsp;- Parses it's PE header  
  &emsp;- Sets Environment Variables  
@@ -40,13 +40,17 @@ ________________________________________________________________________________
  ### Interesting Mutex Created    
  &emsp;- Local\SM0:2580:304:WilStaging_02  
  &emsp;&emsp;- This mutex name has been used by the **Yanluowang Ransomware Group** in the past.  
-![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/mutex.png?raw=true)
+![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/mutex.png?raw=true)  
 <sub>https://github.com/albertzsigovits/malware-mutex</sub>
 
 __________________________________________________________________________________________________________
 
  ## Static Analysis & Dynamic Analysis 
- _________________________________________________________________________________________________________
+ _________________________________________________________________________________________________________  
+
+ **Tool Used:** ProcessMonitor, API Checker, x64dbg, Python  
+ **Environment:** Windows 10 VM  
+ 
  **1. Extract the python code from the pyinstaller archive.**
  Because this executable is compiled with pyinstaller I'm able to pull the original python code out of the executable.  Using uncompyle6 version 3.9.2 I was able to extract the python code titled 
  "code_obf-Statement002.pyc" and many other bundled files from the pyinstaller archive.
