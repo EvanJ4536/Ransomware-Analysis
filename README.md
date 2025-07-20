@@ -83,8 +83,8 @@ ________________________________________________________________________________
 <br/>
 
 **4. Analyzing The Hex**  
- Converting the hex to ascii was yielding nothing useful, I looked closer at the hex and found the magic header for compressed data, "x\9xc".
- With that knowledge I wrote a simple script to decompress it using zlib.  I pasted in a snippet of the hex and ran my decompressor.  At first I got an error that its missing the adler32 checksum at the end of the hex so I edited the script to ignore that and write the output to a file.
+ Converting the hex to ascii was yielding nothing useful, I looked closer at the hex and found the magic header for zlib compressed data, "x\9xc".
+ With that knowledge I wrote a simple script to decompress it.  I pasted in a snippet of the hex and ran my decompressor.  At first I got an error that its missing the adler32 checksum at the end of the hex so I edited the script to ignore that and write the output to a file.
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/decompressed_partial_hex.png?raw=true)  
  Notice the little message underlined in red that the hacker left us, HA!  "Roses are red, Violets are blue, You are a skid, Nobody likes you".  
  
@@ -144,7 +144,7 @@ After hours of combing through the data in this script I can't make any sense of
   During this third process the malware enumerates installed crypto providers and identifies Microsoft Enhanced Cryptographic Provider then loads rsaenh.dll and bcrypt.dll, checks private key policies, and checks fips policies.  
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/get_crypto_provider.png?raw=true)
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/priv_key_settings.png?raw=true)
-![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/fips_policies.png?raw=true)
+![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/fips_policies.png?raw=true)  
   Over 80 Dlls were loaded in this stage and its notable to say that it searched for CRYPTBASE.dll, NETAPI32.dll, and USERENV.dll is odd places like the desktop, and temp folders failing each time then resorting to the system copy.  
   The IPHLPAPI.dll is also loaded and the malware takes a deep dive into the HKLM\System\CurrentControlSet\Services\WinSock2\Parameters\ registry keys querying the value of atleast 100 of them. I didn't find any evidence of network communications it in my analysis so far.
   Soon after that, it starts reading data from itself in chunks of 8192 bytes and accessing different libraries like tc/tcl, select, and an archive base_library.zip.  As I was going through it I noticed after some read blocks there was a WriteFile operation and it would overwrite an entire file with about the same amount of data that was already in it.
