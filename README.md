@@ -75,7 +75,7 @@ ________________________________________________________________________________
 **3. Discovery Of The Obfuscator**
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/hyperion_obfuscator.png?raw=true)  
  I opened the file that was produced by the decrypt call in Notepad++ and its an obfuscator, specifically the Hyperion Obfuscator, which can be found on Github here https://github.com/billythegoat356/Hyperion. 
- This version is modified and is 7 thousand lines.  I searched for suspicious strings, and got a hit on "lambda".  This revealed a surprise I hadn't caught yet.
+ This version of the obfuscator is modified or multiple obfuscators were used.  I searched for suspicious strings, and got a hit on "lambda".  This revealed a surprise I hadn't caught yet.
  There was code hidden just out of frame in my window padded by white space characters before it. I looked at the right-left scroll bar at the bottom of the file and I can see that I can scroll for a long time to the right.
  This revealed huge strings of hex characters and lambda functions. Below is a snippet, notice how small the scrollbar at the bottom is.
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/hidden_hex_white_space.png?raw=true)  
@@ -86,7 +86,7 @@ ________________________________________________________________________________
  Converting the hex to ascii was yielding nothing useful, I looked closer at the hex and found the magic header for zlib compressed data, "x\9xc".
  With that knowledge I wrote a simple script to decompress it.  I pasted in a snippet of the hex and ran my decompressor.  At first I got an error that its missing the adler32 checksum at the end of the hex so I edited the script to ignore that and write the output to a file.
 ![alt text](https://github.com/EvanJ4536/Ransomware-Analysis/blob/main/pngs/decompressed_partial_hex.png?raw=true)  
- Notice the little message underlined in red that the hacker left us, HA!  "Roses are red, Violets are blue, You are a skid, Nobody likes you".  
+ Notice the message underlined in red, "Roses are red, Violets are blue, You are a skid, Nobody likes you".  This is from the Hyperion Obfuscator.
  
  
  I wrote a script to defeat the whitespace obfuscation ([Whitespace Deobfuscator](https://github.com/EvanJ4536/Whitespace-Deobfuscator/tree/main)) and extract all the hex strings from the obfuscated code.
